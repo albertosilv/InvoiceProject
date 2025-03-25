@@ -7,9 +7,6 @@ import java.time.LocalDate;
 
 @Entity
 public class Supplier extends PanacheEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotBlank(message = "O código do fornecedor é obrigatório")
     @Size(max = 50, message = "O código do fornecedor não pode ter mais de 50 caracteres")

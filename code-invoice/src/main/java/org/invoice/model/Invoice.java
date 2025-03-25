@@ -8,9 +8,6 @@ import java.util.List;
 
 @Entity
 public class Invoice extends PanacheEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotBlank(message = "O número da fatura é obrigatório")
     @Size(max = 50, message = "O número da fatura não pode ter mais de 50 caracteres")

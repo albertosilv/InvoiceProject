@@ -6,9 +6,6 @@ import jakarta.validation.constraints.*;
 
 @Entity
 public class InvoiceItem extends PanacheEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotNull(message = "O preço unitário é obrigatório")
     @Positive(message = "O preço unitário deve ser positivo")

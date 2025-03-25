@@ -13,7 +13,6 @@ public class GreetingResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
         Invoice invoice = new Invoice();
-        invoice.
 
         return "Hello RESTEasy";
     }

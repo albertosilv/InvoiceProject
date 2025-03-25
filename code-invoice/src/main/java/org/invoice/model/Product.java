@@ -6,9 +6,6 @@ import jakarta.validation.constraints.*;
 
 @Entity
 public class Product extends PanacheEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @NotBlank(message = "O código do produto é obrigatório")
     @Size(max = 50, message = "O código do produto não pode ter mais de 50 caracteres")
