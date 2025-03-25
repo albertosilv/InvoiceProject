@@ -1,5 +1,6 @@
 package org.invoice.service.supplier;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.invoice.dto.SupplierDTO;
 import org.invoice.dto.SupplierResponseDTO;
 import org.invoice.expection.BusinessException;
@@ -18,6 +19,9 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Inject
     SupplierRepository supplierRepository;
+
+    @Inject
+    ObjectMapper objectMapper;
 
     @Override
     public List<SupplierResponseDTO> findAll(String filter) {
@@ -49,8 +53,7 @@ public class SupplierServiceImpl implements SupplierService {
     public SupplierResponseDTO create(SupplierDTO supplierDTO) {
         validateCnpj(supplierDTO.cnpj);
 
-        Supplier supplier = new Supplier();
-        mapDtoToEntity(supplierDTO, supplier);
+        Supplier supplier =  objectMapper.convertValue(supplierDTO,Supplier.class);
 
         supplierRepository.persist(supplier);
         return new SupplierResponseDTO(supplier);
@@ -64,10 +67,15 @@ public class SupplierServiceImpl implements SupplierService {
 
         if (!supplier.cnpj.equals(supplierDTO.cnpj)) {
             validateCnpj(supplierDTO.cnpj);
+            supplier.cnpj = supplierDTO.cnpj;
         }
+        supplier.data_desativacao = supplierDTO.data_desativacao;
+        supplier.telefone = supplierDTO.telefone;
+        supplier.razao = supplierDTO.razao;
+        supplier.email = supplierDTO.email;
+        supplier.status = supplierDTO.status;
 
-        mapDtoToEntity(supplierDTO, supplier);
-        return new SupplierResponseDTO(supplier);
+        return objectMapper.convertValue(supplier,SupplierResponseDTO.class);
     }
 
     @Override
@@ -83,34 +91,9 @@ public class SupplierServiceImpl implements SupplierService {
         supplierRepository.delete(supplier);
     }
 
-    @Override
-    @Transactional
-    public void changeStatus(Long id, String status) {
-        Supplier supplier = supplierRepository.findByIdOptional(id)
-                .orElseThrow(() -> new BusinessException("Fornecedor não encontrado"));
-
-        SupplierStatus newStatus = SupplierStatus.valueOf(status.toUpperCase());
-        supplier.status = newStatus;
-
-        if (newStatus == SupplierStatus.TERMINATED) {
-            supplier.data_desativacao = LocalDate.now();
-        } else {
-            supplier.data_desativacao = null;
-        }
-    }
-
     private void validateCnpj(String cnpj) {
         if (supplierRepository.findByCnpj(cnpj).isPresent()) {
             throw new BusinessException("CNPJ já cadastrado");
         }
-    }
-
-    private void mapDtoToEntity(SupplierDTO dto, Supplier entity) {
-        entity.razao = dto.razao;
-        entity.cnpj = dto.cnpj.replaceAll("[^0-9]", "");
-        entity.email = dto.email;
-        entity.telefone = dto.telefone;
-        entity.status = dto.status;
-        entity.data_desativacao = dto.data_desativacao;
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 @Entity
+@Table(name = "produto")
 public class Product extends PanacheEntity {
 
     @NotBlank(message = "O código do produto é obrigatório")

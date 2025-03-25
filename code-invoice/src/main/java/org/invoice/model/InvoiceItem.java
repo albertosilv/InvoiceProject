@@ -1,31 +1,41 @@
 package org.invoice.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import org.invoice.model.Product;
 
 @Entity
-public class InvoiceItem extends PanacheEntity {
+@Table(name = "itens_nota_fiscal")
+public class InvoiceItem extends PanacheEntityBase {
 
-    @NotNull(message = "O preço unitário é obrigatório")
-    @Positive(message = "O preço unitário deve ser positivo")
-    @Column(nullable = false)
-    public double preco;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
 
-    @NotNull(message = "A quantidade é obrigatória")
-    @Positive(message = "A quantidade deve ser positiva")
-    @Column(nullable = false)
-    public int quantidade;
+    @ManyToOne
+    @JoinColumn(name = "nota_fiscal_id", nullable = false)
+    public Invoice notaFiscal;
 
-    @NotNull(message = "O produto é obrigatório")
-    @ManyToOne(optional = false)
+    @ManyToOne
+    @JoinColumn(name = "produto_id", nullable = false)
     public Product produto;
 
-    @NotNull(message = "A fatura é obrigatória")
-    @ManyToOne(optional = false)
-    public Invoice fatura;
+    @Column(name = "valor_unitario", nullable = false)
+    public Double valorUnitario;
 
-    public double getTotalAmount() {
-        return preco * quantidade;
+    @Column(nullable = false)
+    public Integer quantidade;
+
+    @Column(name = "valor_total", nullable = false)
+    public Double valorTotal;
+
+    public Double getValorTotal() {
+        return valorUnitario * quantidade;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void calcularTotal() {
+        this.valorTotal = getValorTotal();
     }
 }

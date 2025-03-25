@@ -6,6 +6,8 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "fornecedor")
+
 public class Supplier extends PanacheEntity {
 
     @NotBlank(message = "O código do fornecedor é obrigatório")

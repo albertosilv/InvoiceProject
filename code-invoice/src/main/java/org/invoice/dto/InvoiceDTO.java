@@ -1,19 +1,15 @@
-package org.invoice.model;
+package org.invoice.dto;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.*;
+import org.invoice.model.InvoiceItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "notas_fiscais")
-public class Invoice extends PanacheEntityBase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+public class InvoiceDTO {
 
     @NotBlank(message = "O número da nota fiscal é obrigatório")
     @Size(max = 50, message = "O número da nota não pode exceder 50 caracteres")
@@ -24,9 +20,8 @@ public class Invoice extends PanacheEntityBase {
     public LocalDateTime dataEmissao;
 
     @NotNull(message = "O fornecedor é obrigatório")
-    @ManyToOne
-    @JoinColumn(name = "fornecedor_id", nullable = false)
-    public Supplier fornecedor;
+    @Positive(message = "O ID do fornecedor deve ser positivo")
+    public Long fornecedorId;
 
     @NotBlank(message = "O endereço é obrigatório")
     @Size(max = 200, message = "O endereço não pode exceder 200 caracteres")
@@ -36,13 +31,4 @@ public class Invoice extends PanacheEntityBase {
     @Size(min = 1, message = "Deve haver pelo menos um item na nota fiscal")
     @OneToMany(mappedBy = "notaFiscal", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<InvoiceItem> itens;
-
-    @Column(name = "valor_total", nullable = false)
-    public Double valorTotal;
-
-    public void calcularValorTotal() {
-        this.valorTotal = itens.stream()
-                .mapToDouble(InvoiceItem::getValorTotal)
-                .sum();
-    }
 }
