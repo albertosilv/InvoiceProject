@@ -5,4 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ProductRepository implements PanacheRepository<Product> {
+    public boolean hasMovement(Long productId) {
+        return count("product.id = ?1", productId) > 0;
+    }
 }
