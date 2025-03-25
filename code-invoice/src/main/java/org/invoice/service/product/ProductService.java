@@ -1,17 +1,13 @@
 package org.invoice.service.product;
 
-import jakarta.transaction.Transactional;
-import org.invoice.model.Product;
+import org.invoice.dto.ProductDTO;
+import org.invoice.dto.ProductResponseDTO;
 import java.util.List;
 
 public interface ProductService {
-
-    List<Product> list(String filter);
-
-    Product getById(Long id);
-
-    Product create(Product produto);
-
-    Product update(Long id, Product produto);
+    List<ProductResponseDTO> findAll(String filter);
+    ProductResponseDTO findById(Long id);
+    ProductResponseDTO create(ProductDTO productDTO);
+    ProductResponseDTO update(Long id, ProductDTO productDTO);
     void delete(Long id);
 }

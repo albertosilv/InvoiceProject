@@ -1,13 +1,17 @@
 package org.invoice.service.product;
 
+import org.invoice.dto.ProductDTO;
+import org.invoice.dto.ProductResponseDTO;
+import org.invoice.expection.BusinessException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import org.invoice.expection.BusinessException;
 import org.invoice.model.Product;
 import org.invoice.repository.ProductRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ProductServiceImpl implements ProductService {
@@ -16,45 +20,54 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
 
     @Override
-    public List<Product> list(String filter) {
-        if (filter == null || filter.isEmpty()) {
-            return productRepository.listAll();
-        } else {
-            return productRepository.list("descricao like ?1", "%" + filter + "%");
-        }
+    public List<ProductResponseDTO> findAll(String filter) {
+        List<Product> products = productRepository.search(filter);
+        return products.stream()
+                .map(ProductResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Product getById(Long id) {
-        return productRepository.findById(id);
+    public ProductResponseDTO findById(Long id) {
+        Product product = productRepository.findByIdOptional(id)
+                .orElseThrow(() -> new BusinessException("Produto não encontrado"));
+        return new ProductResponseDTO(product);
     }
 
+    @Override
     @Transactional
-    @Override
-    public Product create(Product product) {
+    public ProductResponseDTO create(ProductDTO productDTO) {
+        Product product = new Product();
+        product.descricao = productDTO.descricao;
+        product.situacao = productDTO.situacao;
+
         productRepository.persist(product);
-        return product;
+        return new ProductResponseDTO(product);
     }
 
     @Override
     @Transactional
-    public Product update(Long id, Product produto) {
-        Product existente = productRepository.findById(id);
-        if (existente == null) {
-            throw new BusinessException("Produto não encontrado");
-        }
+    public ProductResponseDTO update(Long id, ProductDTO productDTO) {
+        Product product = productRepository.findByIdOptional(id)
+                .orElseThrow(() -> new BusinessException("Produto não encontrado"));
 
-        existente.descricao = produto.descricao;
-        existente.situacao = produto.situacao;
+        product.descricao = productDTO.descricao;
+        product.situacao = productDTO.situacao;
 
-        return existente;    }
+        return new ProductResponseDTO(product);
+    }
 
     @Override
     @Transactional
     public void delete(Long id) {
+        Product product = productRepository.findByIdOptional(id)
+                .orElseThrow(() -> new BusinessException("Produto não encontrado"));
+
         if (productRepository.hasMovement(id)) {
             throw new BusinessException("Não é possível excluir produto com movimentação");
         }
-        productRepository.deleteById(id);
+
+        productRepository.delete(product);
     }
+
 }

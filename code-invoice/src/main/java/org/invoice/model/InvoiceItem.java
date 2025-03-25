@@ -10,22 +10,22 @@ public class InvoiceItem extends PanacheEntity {
     @NotNull(message = "O preço unitário é obrigatório")
     @Positive(message = "O preço unitário deve ser positivo")
     @Column(nullable = false)
-    public double unitPrice;
+    public double preco;
 
     @NotNull(message = "A quantidade é obrigatória")
     @Positive(message = "A quantidade deve ser positiva")
     @Column(nullable = false)
-    public int quantity;
+    public int quantidade;
 
     @NotNull(message = "O produto é obrigatório")
     @ManyToOne(optional = false)
-    public Product product;
+    public Product produto;
 
     @NotNull(message = "A fatura é obrigatória")
     @ManyToOne(optional = false)
-    public Invoice invoice;
+    public Invoice fatura;
 
     public double getTotalAmount() {
-        return unitPrice * quantity;
+        return preco * quantidade;
     }
 }
