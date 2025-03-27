@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 public class InvoiceItemDTO {
 
     @NotNull(message = "Produto é obrigatório")
-    public Long produtoId;
+    public Long produto_id;
 
     @NotNull(message = "Valor unitário é obrigatório")
     @Positive(message = "Valor unitário deve ser positivo")

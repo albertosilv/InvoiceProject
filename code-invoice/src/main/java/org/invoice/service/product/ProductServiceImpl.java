@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import org.invoice.model.Product;
+import org.invoice.repository.InvoiceItemRepository;
 import org.invoice.repository.ProductRepository;
 
 import java.time.LocalDate;
@@ -18,6 +19,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Inject
     ProductRepository productRepository;
+
+    @Inject
+    InvoiceItemRepository itemInvoiceRepository;
+
 
     @Override
     public List<ProductResponseDTO> findAll(String filter) {
@@ -40,6 +45,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = new Product();
         product.descricao = productDTO.descricao;
         product.situacao = productDTO.situacao;
+        product.codigo=productDTO.codigo;
 
         productRepository.persist(product);
         return new ProductResponseDTO(product);
@@ -63,8 +69,8 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdOptional(id)
                 .orElseThrow(() -> new BusinessException("Produto não encontrado"));
 
-        if (productRepository.hasMovement(id)) {
-            throw new BusinessException("Não é possível excluir produto com movimentação");
+        if (itemInvoiceRepository.existsByProductId(id)) {
+            throw new BusinessException("Não é possível excluir o produto, pois ele está vinculado a uma ou mais notas fiscais.");
         }
 
         productRepository.delete(product);

@@ -21,7 +21,7 @@ public class InvoiceDTO {
 
     @NotNull(message = "O fornecedor é obrigatório")
     @Positive(message = "O ID do fornecedor deve ser positivo")
-    public Long fornecedorId;
+    public Long fornecedor_id;
 
     @NotBlank(message = "O endereço é obrigatório")
     @Size(max = 200, message = "O endereço não pode exceder 200 caracteres")

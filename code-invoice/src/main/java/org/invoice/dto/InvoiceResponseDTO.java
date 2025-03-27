@@ -17,6 +17,8 @@ public class InvoiceResponseDTO {
     public Double valorTotal;
     public List<InvoiceItemResponseDTO> itens;
 
+    public InvoiceResponseDTO() {
+    }
     public InvoiceResponseDTO(Invoice notaFiscal) {
         this.id = notaFiscal.id;
         this.numeroNota = notaFiscal.numeroNota;

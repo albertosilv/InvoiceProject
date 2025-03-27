@@ -8,8 +8,7 @@ import java.util.List;
 
 @ApplicationScoped
 public class InvoiceItemRepository implements PanacheRepository<InvoiceItem> {
-    public List<InvoiceItem> listarPorProduto(Long produtoId) {
-        return list("produto.id", produtoId);
+    public boolean existsByProductId(Long productId) {
+        return count("produto.id", productId) > 0;
     }
-
 }

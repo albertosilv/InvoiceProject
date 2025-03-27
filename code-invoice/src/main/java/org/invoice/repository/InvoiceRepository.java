@@ -13,4 +13,7 @@ public class InvoiceRepository implements PanacheRepository<Invoice> {
         return list("numeroNota like ?1 or fornecedor.razaoSocial like ?2",
                 "%" + termo + "%", "%" + termo + "%");
     }
+    public boolean existsBySupplierId(Long supplierId) {
+        return count("fornecedor.id", supplierId) > 0;
+    }
 }

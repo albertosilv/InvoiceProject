@@ -6,6 +6,8 @@ import org.invoice.dto.SupplierResponseDTO;
 import org.invoice.expection.BusinessException;
 import org.invoice.model.Supplier;
 import org.invoice.model.SupplierStatus;
+import org.invoice.repository.InvoiceItemRepository;
+import org.invoice.repository.InvoiceRepository;
 import org.invoice.repository.SupplierRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,10 +23,17 @@ public class SupplierServiceImpl implements SupplierService {
     SupplierRepository supplierRepository;
 
     @Inject
+    InvoiceRepository invoiceRepository;
+
+
+
+
+    @Inject
     ObjectMapper objectMapper;
 
     @Override
     public List<SupplierResponseDTO> findAll(String filter) {
+        System.out.println(filter);
         List<Supplier> suppliers = filter == null || filter.isEmpty() ?
                 supplierRepository.listAll() :
                 supplierRepository.search(filter);
@@ -74,6 +83,7 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.razao = supplierDTO.razao;
         supplier.email = supplierDTO.email;
         supplier.status = supplierDTO.status;
+        supplier.codigo = supplierDTO.codigo;
 
         return objectMapper.convertValue(supplier,SupplierResponseDTO.class);
     }
@@ -83,12 +93,12 @@ public class SupplierServiceImpl implements SupplierService {
     public void delete(Long id) {
         Supplier supplier = supplierRepository.findByIdOptional(id)
                 .orElseThrow(() -> new BusinessException("Fornecedor não encontrado"));
-
-        if (supplierRepository.hasMovement(id)) {
-            throw new BusinessException("Não é possível excluir fornecedor com movimentação");
+        boolean hasInvoices = invoiceRepository.existsBySupplierId(id);
+        if (hasInvoices) {
+            throw new BusinessException("Não é possível excluir o fornecedor, pois ele está vinculado a uma ou mais faturas.");
+        }else{
+            supplierRepository.delete(supplier);
         }
-
-        supplierRepository.delete(supplier);
     }
 
     private void validateCnpj(String cnpj) {

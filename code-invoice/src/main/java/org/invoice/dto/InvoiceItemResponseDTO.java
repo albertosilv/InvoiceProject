@@ -10,6 +10,9 @@ public class InvoiceItemResponseDTO {
     public Integer quantidade;
     public Double valorTotal;
 
+    public InvoiceItemResponseDTO() {
+    }
+
     public InvoiceItemResponseDTO(InvoiceItem item) {
         this.id = item.id;
         this.produto = new ProductResponseDTO(item.produto);

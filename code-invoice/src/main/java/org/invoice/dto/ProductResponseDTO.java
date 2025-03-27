@@ -8,6 +8,8 @@ public class ProductResponseDTO {
     public String descricao;
     public String situacao;
 
+    public ProductResponseDTO(){}
+
     public ProductResponseDTO(Product product) {
         this.id = product.id;
         this.codigo = product.codigo;

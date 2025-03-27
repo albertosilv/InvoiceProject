@@ -1,5 +1,6 @@
 package org.invoice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import org.invoice.model.Product;
@@ -14,6 +15,7 @@ public class InvoiceItem extends PanacheEntityBase {
 
     @ManyToOne
     @JoinColumn(name = "nota_fiscal_id", nullable = false)
+    @JsonIgnore
     public Invoice notaFiscal;
 
     @ManyToOne

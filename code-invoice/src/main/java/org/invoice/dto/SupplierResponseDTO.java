@@ -7,16 +7,22 @@ import java.time.format.DateTimeFormatter;
 
 public class SupplierResponseDTO {
     public Long id;
-    public String razao_social;
+    public String codigo;
+    public String razao;
     public String cnpj;
     public String email;
     public String telefone;
     public String status;
     public String data_desativacao;
 
+    public SupplierResponseDTO() {
+    }
+
+
     public SupplierResponseDTO(Supplier supplier) {
         this.id = supplier.id;
-        this.razao_social = supplier.razao;
+        this.codigo=supplier.codigo;
+        this.razao = supplier.razao;
         this.cnpj = supplier.getFormattedCnpj();
         this.email = supplier.email;
         this.telefone = supplier.telefone;

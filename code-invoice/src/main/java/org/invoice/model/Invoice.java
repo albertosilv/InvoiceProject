@@ -41,8 +41,12 @@ public class Invoice extends PanacheEntityBase {
     public Double valorTotal;
 
     public void calcularValorTotal() {
-        this.valorTotal = itens.stream()
-                .mapToDouble(InvoiceItem::getValorTotal)
-                .sum();
+        if (itens == null || itens.isEmpty()) {
+            this.valorTotal = 0.0;
+        } else {
+            this.valorTotal = itens.stream()
+                    .mapToDouble(InvoiceItem::getValorTotal)
+                    .sum();
+        }
     }
 }
